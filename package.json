@@ -1,0 +1,18 @@
+{
+  "name": "elpoemario-oauth-proxy",
+  "version": "1.0.0",
+  "description": "OAuth proxy (GitHub) para Decap CMS de El Poemario.",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260426.1",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.86.0"
+  }
+}

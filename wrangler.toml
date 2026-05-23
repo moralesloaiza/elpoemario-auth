@@ -1,0 +1,16 @@
+name = "elpoemario-oauth-proxy"
+main = "src/index.ts"
+compatibility_date = "2026-05-23"
+
+# Apaga el subdominio gratis *.workers.dev (solo se sirve en custom domain).
+workers_dev = false
+
+# Custom domain en la zona elpoemario.com.
+# Cloudflare crea/mantiene los registros DNS necesarios automáticamente.
+routes = [
+  { pattern = "auth.elpoemario.com", custom_domain = true }
+]
+
+# Variable pública (NO secreta): origin del sitio donde corre Decap.
+[vars]
+SITE_URL = "https://elpoemario.com"
