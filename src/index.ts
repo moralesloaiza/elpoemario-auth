@@ -7,6 +7,9 @@ export interface Env {
 const GITHUB_AUTHORIZE_URL = "https://github.com/login/oauth/authorize";
 const GITHUB_TOKEN_URL = "https://github.com/login/oauth/access_token";
 const STATE_COOKIE = "oauth_state";
+// Scope fijo: no se lee del query string para que un enlace manipulado no
+// pueda ampliar los permisos que se solicitan a GitHub.
+const OAUTH_SCOPE = "repo,user";
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -18,13 +21,12 @@ export default {
   },
 };
 
-async function handleAuth(url: URL, env: Env): Promise<Response> {
+async function handleAuth(_url: URL, env: Env): Promise<Response> {
   const state = crypto.randomUUID();
-  const scope = url.searchParams.get("scope") ?? "repo,user";
 
   const authorize = new URL(GITHUB_AUTHORIZE_URL);
   authorize.searchParams.set("client_id", env.OAUTH_CLIENT_ID);
-  authorize.searchParams.set("scope", scope);
+  authorize.searchParams.set("scope", OAUTH_SCOPE);
   authorize.searchParams.set("state", state);
 
   return new Response(null, {
@@ -100,6 +102,12 @@ function renderResult(
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Set-Cookie": `${STATE_COOKIE}=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`,
+      // La respuesta porta el token de acceso: que no se cachee, no filtre
+      // referrer ni pueda enmarcarse en otro sitio.
+      "Cache-Control": "no-store, max-age=0",
+      "Referrer-Policy": "no-referrer",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
     },
   });
 }
